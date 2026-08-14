@@ -1,0 +1,56 @@
+{
+  "name": "opto-sync-test/laravel-livewire-e2e",
+  "description": "Laravel, Livewire, service worker, queue worker, and local Supabase OptoSync fixture",
+  "type": "project",
+  "license": "MIT",
+  "repositories": [
+    {
+      "type": "path",
+      "url": "vendor/opto-sync-clients/clients/php",
+      "options": {
+        "symlink": false,
+        "versions": {
+          "opto-sync/opto-sync-client": "0.2.0"
+        }
+      }
+    }
+  ],
+  "require": {
+    "php": "^8.3",
+    "laravel/framework": "^13.25",
+    "livewire/livewire": "^4.4",
+    "opto-sync/opto-sync-client": "^0.2.0"
+  },
+  "require-dev": {
+    "orchestra/testbench": "^11.0",
+    "phpunit/phpunit": "^12.5"
+  },
+  "autoload": {
+    "psr-4": {
+      "App\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Tests\\": "tests/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "App\\OptoSyncFixtureServiceProvider"
+      ]
+    }
+  },
+  "scripts": {
+    "test": "phpunit"
+  },
+  "config": {
+    "allow-plugins": {
+      "php-http/discovery": false
+    },
+    "sort-packages": true
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true
+}

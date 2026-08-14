@@ -1,0 +1,56 @@
+name: Laravel Livewire Supabase E2E
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  laravel-livewire:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+        with:
+          submodules: recursive
+      - uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240
+        with:
+          php-version: "8.4"
+          coverage: none
+          extensions: curl, json, mbstring
+          tools: composer:v2
+      - name: Install pinned PHP graph
+        run: |
+          composer validate --strict
+          composer install --no-interaction --no-progress --prefer-dist
+      - name: Verify PHP and Livewire contracts
+        run: composer test
+      - name: Verify service worker syntax
+        run: node --check public/service-worker.js
+      - name: Verify PHP syntax
+        run: find src tests scripts routes -name '*.php' -print0 | xargs -0 -n1 php -l
+
+  local-supabase:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+      - uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240
+        with:
+          php-version: "8.4"
+          coverage: none
+          extensions: curl, json, pdo_pgsql
+      - uses: supabase/setup-cli@aa3515eac405eac768fa4a72147c22d88a283c7b
+        with:
+          version: "2.114.0"
+      - name: Start local Supabase and apply migrations
+        run: supabase start
+      - name: Export deterministic local connection values
+        run: supabase status -o env >> "$GITHUB_ENV"
+      - name: Verify PostgREST, RLS, and Realtime publication
+        run: php scripts/supabase_contract.php
+      - name: Stop local Supabase
+        if: always()
+        run: supabase stop --no-backup
+
