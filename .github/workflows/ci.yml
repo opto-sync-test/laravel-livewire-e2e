@@ -46,11 +46,12 @@ jobs:
           version: "2.114.0"
       - name: Start local Supabase and apply migrations
         run: supabase start
-      - name: Export deterministic local connection values
-        run: supabase status -o env >> "$GITHUB_ENV"
       - name: Verify PostgREST, RLS, and Realtime publication
-        run: php scripts/supabase_contract.php
+        run: |
+          set -a
+          eval "$(supabase status -o env)"
+          set +a
+          php scripts/supabase_contract.php
       - name: Stop local Supabase
         if: always()
         run: supabase stop --no-backup
-
