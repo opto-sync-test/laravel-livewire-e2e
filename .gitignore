@@ -11,3 +11,7 @@ tmp
 temp
 tmp/worktrees
 temp/worktrees
+
+# Local temporary directories and repository-owned worktrees
+tmp/
+temp/
