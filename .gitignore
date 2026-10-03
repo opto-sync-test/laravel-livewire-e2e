@@ -6,3 +6,7 @@
 /supabase/.temp/
 *.log
 
+
+# Local temporary directories and repository-owned worktrees
+tmp/
+temp/
